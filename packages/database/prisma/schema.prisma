@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  type        String
+  source      String
+  severity    String
+  message     String
+  metadata    Json?
+  timestamp   DateTime
+  userId      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  insights    Insight[]
+  
+  @@index([type, timestamp])
+  @@index([source, timestamp])
+  @@index([severity, timestamp])
+  @@index([userId])
+  @@map("events")
+}
+
+model Insight {
+  id          String   @id @default(cuid())
+  eventId     String
+  type        String
+  confidence  Float
+  title       String
+  description String   @db.Text
+  aiModel     String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  @@index([eventId])
+  @@index([type, createdAt])
+  @@index([confidence])
+  @@map("insights")
+}
+
+model Metric {
+  id          String   @id @default(cuid())
+  name        String
+  value       Float
+  tags        Json?
+  timestamp   DateTime
+  createdAt   DateTime @default(now())
+  
+  @@index([name, timestamp])
+  @@index([timestamp])
+  @@map("metrics")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  apiKey      String?  @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("users")
+}

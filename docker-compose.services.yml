@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  event-ingestion:
+    build:
+      context: .
+      dockerfile: apps/event-ingestion-service/Dockerfile
+    container_name: eventiq-event-ingestion
+    depends_on:
+      - postgres
+      - redpanda
+      - redis
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://eventiq:eventiq_dev_password@postgres:5432/eventiq_dev
+      KAFKA_BROKERS: redpanda:9092
+      REDIS_URL: redis://redis:6379
+    networks:
+      - eventiq-network
+
+  ai-analysis:
+    build:
+      context: .
+      dockerfile: apps/ai-analysis-service/Dockerfile
+    container_name: eventiq-ai-analysis
+    depends_on:
+      - postgres
+      - redpanda
+      - redis
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://eventiq:eventiq_dev_password@postgres:5432/eventiq_dev
+      KAFKA_BROKERS: redpanda:9092
+      REDIS_URL: redis://redis:6379
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    networks:
+      - eventiq-network
+
+  analytics:
+    build:
+      context: .
+      dockerfile: apps/analytics-service/Dockerfile
+    container_name: eventiq-analytics
+    depends_on:
+      - postgres
+      - redpanda
+      - redis
+    ports:
+      - "3003:3003"
+    environment:
+      NODE_ENV: development
+      PORT: 3003
+      DATABASE_URL: postgresql://eventiq:eventiq_dev_password@postgres:5432/eventiq_dev
+      KAFKA_BROKERS: redpanda:9092
+      REDIS_URL: redis://redis:6379
+    networks:
+      - eventiq-network
+
+networks:
+  eventiq-network:
+    external: true
