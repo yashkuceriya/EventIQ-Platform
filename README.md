@@ -6,7 +6,7 @@ A production-ready microservices platform for real-time event processing with AI
 
 - **Frontend**: Next.js 14 (Vercel)
 - **Microservices**: TypeScript/Node.js
-  - Event Ingestion Service (Port 3001)
+  - Event Ingestion Service (Port )
   - AI Analysis Service
   - Analytics Service (Port 3003)
 - **Message Queue**: Apache Kafka
@@ -70,14 +70,14 @@ cd apps/web && pnpm dev
 - **Frontend**: http://localhost:3000
 - **Dashboard**: http://localhost:3000/dashboard
 - **Kafka UI**: http://localhost:8080
-- **Event Ingestion API**: http://localhost:3001
+- **Event Ingestion API**: http://localhost:3002
 - **Analytics API**: http://localhost:3003
 
 ## 📡 API Examples
 
 ### Submit Event
 ```bash
-curl -X POST http://localhost:3001/api/events \
+curl -X POST http://localhost:3002/api/events \
   -H "Content-Type: application/json" \
   -d '{
     "type": "user.signup",
@@ -93,7 +93,7 @@ curl -X POST http://localhost:3001/api/events \
 
 ### Get Metrics
 ```bash
-curl http://localhost:3001/api/metrics
+curl http://localhost:3002/api/metrics
 ```
 
 ### Get Real-time Analytics
@@ -202,7 +202,7 @@ terraform apply
 **Event Ingestion Service** (`apps/event-ingestion-service/.env`):
 ```env
 NODE_ENV=development
-PORT=3001
+PORT=
 DATABASE_URL=postgresql://eventiq:eventiq_dev_password@localhost:5432/eventiq_dev
 KAFKA_BROKERS=localhost:19092
 REDIS_URL=redis://localhost:6379
@@ -233,7 +233,7 @@ REDIS_URL=redis://localhost:6379
 ./scripts/test-api.sh
 
 # Or manually:
-curl -X POST http://localhost:3001/api/events \
+curl -X POST http://localhost:/api/events \
   -H "Content-Type: application/json" \
   -d '{
     "type": "test.event",
@@ -302,7 +302,7 @@ cd packages/database && pnpm db:generate
 ### Port conflicts
 ```bash
 # Check what's using the port
-lsof -i :3001  # or :3003, :19092, etc.
+lsof -i :  # or :3003, :19092, etc.
 ```
 
 ## 📞 Support
